@@ -1,0 +1,22 @@
+{
+  "name": "supplymatch",
+  "version": "1.0.0",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder"
+  },
+  "devDependencies": {
+    "electron": "^...",
+    "electron-builder": "^..."
+  },
+  "build": {
+    "appId": "com.app.supplymatch",
+    "win": {
+      "target": "nsis"
+    },
+    "directories": {
+      "output": "dist"
+    }
+  }
+}

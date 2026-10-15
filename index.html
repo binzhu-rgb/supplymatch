@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SupplyMatch — нужный поставщик за минуту</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&family=Rubik:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f8fc;--card:#fff;--ink:#14203d;--mute:#5d6b89;--line:#dfe5f1;--blue:#1d4ed8;--tint:#e8efff;--teal:#0e7490;--gold:#e0a100;--navy:#0f2a7a;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1226;--card:#131c36;--ink:#eaf0ff;--mute:#9aa8c9;--line:#26335a;--blue:#6e95ff;--tint:#1a2850;--teal:#4cc3e0;--gold:#f2c14e;--navy:#0b1226;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0b1226;--card:#131c36;--ink:#eaf0ff;--mute:#9aa8c9;--line:#26335a;--blue:#6e95ff;--tint:#1a2850;--teal:#4cc3e0;--gold:#f2c14e;--navy:#0b1226;color-scheme:dark}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "IBM Plex Sans",system-ui,sans-serif}
+h1,h2,h3,.logo{font-family:Rubik,"IBM Plex Sans",system-ui,sans-serif;margin:0;line-height:1.15}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+header{border-bottom:1px solid var(--line);background:var(--card)}
+header .wrap{display:flex;align-items:center;gap:12px;height:60px}
+.logo{font-weight:700;font-size:20px;color:var(--blue);flex:1}
+.chip{background:var(--tint);border-radius:99px;padding:4px 12px;font-size:14px}
+.btn{border:0;border-radius:10px;padding:11px 18px;background:var(--blue);color:#fff;font-weight:500;cursor:pointer}
+:root[data-theme="dark"] .btn,.btn.on-dark{color:#0b1226}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .btn{color:#0b1226}}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn.sm{padding:6px 12px;font-size:14px}
+input,select,textarea{width:100%;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+label{display:block;font-size:14px;color:var(--mute);margin:12px 0 4px}
+/* registration */
+.reg{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;min-height:calc(100vh - 61px);padding:32px 0}
+.reg h1{font-size:clamp(34px,6vw,56px);font-weight:700}
+.reg p.lead{color:var(--mute);font-size:19px;max-width:420px}
+.net{margin-top:28px;max-width:320px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px}
+.roles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.role{border:2px solid var(--line);border-radius:12px;padding:14px;text-align:left;background:none;cursor:pointer}
+.role b{display:block;font-family:Rubik,sans-serif}.role span{font-size:13px;color:var(--mute)}
+.role[aria-pressed=true]{border-color:var(--blue);background:var(--tint)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+/* tabs & layout */
+.tabs{display:flex;gap:6px;margin:22px 0 18px;border-bottom:1px solid var(--line)}
+.tab{background:none;border:0;border-bottom:3px solid transparent;padding:10px 16px;cursor:pointer;color:var(--mute);font-weight:500}
+.tab[aria-selected=true]{color:var(--blue);border-color:var(--blue)}
+.cat{display:grid;grid-template-columns:240px 1fr;gap:24px;padding-bottom:48px}
+.filters{align-self:start}
+.item{display:grid;grid-template-columns:56px 1fr auto;gap:14px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px;cursor:pointer;width:100%;text-align:left}
+.item:hover{border-color:var(--blue)}
+.av{width:56px;height:56px;border-radius:12px;background:var(--navy);color:#fff;display:grid;place-items:center;font:700 22px Rubik,sans-serif}
+.item h3{font-size:17px}.meta{color:var(--mute);font-size:14px}
+.stars{color:var(--gold);font-weight:500;white-space:nowrap}
+.tag{display:inline-block;background:var(--tint);border-radius:6px;padding:1px 8px;font-size:12px;margin:4px 4px 0 0}
+.right{text-align:right;font-size:14px}
+.score{font:700 26px Rubik,sans-serif;color:var(--teal)}
+.bar{height:6px;border-radius:4px;background:var(--line);margin-top:4px;overflow:hidden}.bar i{display:block;height:100%;background:var(--teal)}
+.ex{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 14px}
+.ex button{background:var(--tint);border:0;border-radius:99px;padding:6px 12px;font-size:14px;cursor:pointer}
+.empty{color:var(--mute);padding:30px;text-align:center;border:1px dashed var(--line);border-radius:14px}
+dialog{border:0;border-radius:18px;padding:24px;max-width:560px;width:calc(100% - 32px);background:var(--card);color:var(--ink)}
+dialog::backdrop{background:rgba(5,10,30,.55)}
+.rev{border-top:1px solid var(--line);padding:10px 0;font-size:15px}
+.stat{display:flex;gap:18px;flex-wrap:wrap;margin:12px 0}.stat div{font-size:13px;color:var(--mute)}.stat b{display:block;font-size:17px;color:var(--ink)}
+.chat{display:grid;grid-template-columns:250px 1fr;padding:0;overflow:hidden;min-height:460px;margin-bottom:48px}.clist{border-right:1px solid var(--line);overflow:auto;max-height:520px}.crow{display:block;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--line);padding:12px 14px;cursor:pointer}.crow span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.crow[aria-current=true]{background:var(--tint)}.cbox{display:flex;flex-direction:column;min-width:0}.chead{padding:12px 16px;border-bottom:1px solid var(--line)}.msgs{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:8px;min-height:300px;max-height:420px}.cin{display:flex;gap:8px;padding:10px}.bub{max-width:82%;padding:8px 12px;border-radius:14px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:15px}.bub.me{align-self:flex-end;background:var(--blue);color:#fff}.bub.them{align-self:flex-start;background:var(--tint)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .bub.me{color:#0b1226}}
+#asst{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:20;display:flex;flex-direction:column;align-items:flex-end;gap:10px}#ap{width:min(360px,calc(100vw - 32px));height:min(480px,70vh);background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 12px 40px rgba(5,10,30,.25);display:flex;flex-direction:column;overflow:hidden}#ap[hidden]{display:none}.ah{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:1px solid var(--line)}#am{flex:1;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:8px}#ab{border-radius:99px;padding:12px 20px;box-shadow:0 6px 20px rgba(5,10,30,.3)}#aex{padding:0 12px}#aex button{font-size:13px}
+#toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--navy);color:#fff;padding:12px 20px;border-radius:12px;opacity:0;pointer-events:none;transition:opacity .2s}
+#toast.show{opacity:1}
+@media (max-width:760px){.reg,.cat,.chat{grid-template-columns:1fr}.clist{border-right:0;max-height:160px}.reg{gap:24px;min-height:0}.net{display:none}.item{grid-template-columns:48px 1fr}.right{grid-column:1/-1;text-align:left}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1d4ed8">
+<link rel="apple-touch-icon" href="icon-192.png">
+</head>
+<body>
+<header><div class="wrap"><span class="logo">SupplyMatch</span><span id="who"></span><button class="btn ghost sm" id="out" hidden>Выйти</button></div></header>
+<main class="wrap" id="app"></main>
+<div id="toast" role="status"></div>
+<dialog id="dlg"></dialog>
+
+<script>
+const CATS={meat:"Мясо и птица",veg:"Овощи и зелень",dairy:"Молочные продукты",bread:"Хлеб и тесто",drinks:"Напитки",pack:"Упаковка"};
+const KW={meat:["мяс","говяд","баран","кур","птиц","колбас","фарш","донер"],veg:["овощ","помидор","томат","огур","картоф","лук","зелен","салат"],dairy:["молок","сыр","сметан","йогурт","масл","творог"],bread:["хлеб","лаваш","булк","тесто","лепешк","выпечк"],drinks:["напит","вод","сок","чай","кофе","лимонад","айран"],pack:["упаков","короб","стакан","салфет","пакет","контейнер","фольг"]};
+const R=(a,t,r)=>({a,t,r});
+const SUP=[
+{id:"s1",name:"Алтын Ет",city:"Тараз",cat:"meat",tags:"говядина баранина халяль фарш мясо донер",min:150000,days:1,deals:240,since:2016,desc:"Халяльное мясо с собственной бойни, доставка по Жамбылской области.",rev:[R("Донерная «Шаурма №1»","Всегда свежее, привезли в срок.",5),R("Кафе «Арай»","Цена чуть выше, качество стабильное.",4)]},
+{id:"s2",name:"Қазы Фуд",city:"Алматы",cat:"meat",tags:"курица птица колбаса мясо охлаждённое",min:300000,days:2,deals:410,since:2014,desc:"Оптом куриное мясо и колбасные изделия.",rev:[R("Столовая «Дастархан»","Берём второй год, срывов не было.",5),R("Донерная «Тоқаш»","Один раз задержали на день.",4),R("Бистро «Лайк»","Хорошая цена за большой объём.",4)]},
+{id:"s3",name:"Степной Кролик",city:"Шымкент",cat:"meat",tags:"мясо баранина кролик фермерское",min:80000,days:3,deals:35,since:2023,desc:"Небольшая ферма, фермерское мясо малыми партиями.",rev:[R("Кафе «Бастау»","Вкусно, но объёмы небольшие.",4)]},
+{id:"s4",name:"Жасыл Бақ",city:"Тараз",cat:"veg",tags:"овощи помидоры огурцы картофель лук зелень салат",min:50000,days:1,deals:520,since:2012,desc:"Свежие овощи с местных теплиц, ежедневная доставка.",rev:[R("Донерная «Шаурма №1»","Помидоры отличные, привозят с утра.",5),R("Кафе «Арай»","Надёжные, цены адекватные.",5)]},
+{id:"s5",name:"Сүт Жолы",city:"Тараз",cat:"dairy",tags:"молоко сыр сметана йогурт айран творог масло",min:70000,days:1,deals:300,since:2015,desc:"Молочная продукция местных ферм, быстрая доставка.",rev:[R("Бистро «Лайк»","Сметана и сыр на высоте.",5),R("Кафе «Бастау»","Иногда не хватает ассортимента.",4)]},
+{id:"s6",name:"Нан & Лаваш",city:"Алматы",cat:"bread",tags:"хлеб лаваш булочки тесто лепешки выпечка",min:40000,days:1,deals:610,since:2011,desc:"Лаваш и хлеб для общепита, печём каждую ночь.",rev:[R("Донерная «Тоқаш»","Лаваш тонкий и не рвётся.",5),R("Донерная «Шаурма №1»","Лучший лаваш, что пробовали.",5)]},
+{id:"s7",name:"Кола-Опт",city:"Шымкент",cat:"drinks",tags:"напитки вода сок кола лимонад чай кофе",min:120000,days:2,deals:150,since:2018,desc:"Напитки и вода оптом, лучшие цены на объёмы.",rev:[R("Кафе «Арай»","Цены хорошие, пару раз путали ассортимент.",3),R("Столовая «Дастархан»","Всё чётко.",4)]},
+{id:"s8",name:"ПакетПро",city:"Алматы",cat:"pack",tags:"упаковка коробки стаканы салфетки пакеты контейнеры фольга",min:60000,days:2,deals:380,since:2017,desc:"Упаковка для еды на вынос с брендированием.",rev:[R("Донерная «Тоқаш»","Хорошая бумага, быстро напечатали логотип.",5),R("Бистро «Лайк»","Качество упаковки отличное.",5),R("Кафе «Бастау»","Доставка поздновато.",3)]}
+];
+const STO=[
+{id:"m1",name:"Донерная «Шаурма №1»",city:"Тараз",cat:"meat",tags:"мясо говядина курица донер",need:"Нужно 200 кг говядины и курицы в неделю",budget:600000,days:2,deals:48,since:2022,desc:"Сеть из 3 донерных, ищем стабильного поставщика мяса.",rev:[R("Нан & Лаваш","Платят вовремя.",5)]},
+{id:"m2",name:"Кафе «Арай»",city:"Тараз",cat:"veg",tags:"овощи помидоры огурцы зелень",need:"Ежедневно овощи и зелень для кухни",budget:150000,days:1,deals:30,since:2021,desc:"Семейное кафе на 40 мест.",rev:[R("Жасыл Бақ","Чёткие заказы, приятно работать.",5)]},
+{id:"m3",name:"Бистро «Лайк»",city:"Алматы",cat:"pack",tags:"упаковка стаканы контейнеры салфетки",need:"Упаковка и контейнеры с логотипом",budget:250000,days:3,deals:22,since:2023,desc:"Бистро на вынос в центре Алматы.",rev:[R("ПакетПро","Адекватные заказчики.",4)]},
+{id:"m4",name:"Донерная «Тоқаш»",city:"Алматы",cat:"bread",tags:"лаваш хлеб булочки",need:"Лаваш 1500 штук в день",budget:200000,days:1,deals:60,since:2020,desc:"Донерная у университета, высокий поток.",rev:[R("Нан & Лаваш","Постоянные клиенты.",5)]},
+{id:"m5",name:"Столовая «Дастархан»",city:"Шымкент",cat:"drinks",tags:"напитки вода сок чай",need:"Напитки и вода для столовой",budget:180000,days:2,deals:41,since:2019,desc:"Корпоративная столовая на 300 человек.",rev:[R("Кола-Опт","Всё хорошо.",4)]}
+];
+const $=s=>document.querySelector(s),esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt=n=>Number(n).toLocaleString("ru-RU")+" ₸";
+const avg=o=>o.rev.length?o.rev.reduce((s,r)=>s+r.r,0)/o.rev.length:0;
+let ls={get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+let user=ls.get("sm_user"),extra=ls.get("sm_extra")||[],tab="catalog",role="supplier",f={q:"",cat:"",city:"",sort:"rating"},ai={q:"",res:null,busy:false};
+const isStore=()=>user&&user.role==="store";
+const list=()=>isStore()?SUP.concat(extra.filter(x=>x.kind==="sup")):STO.concat(extra.filter(x=>x.kind==="sto"));
+const toast=t=>{const e=$("#toast");e.textContent=t;e.classList.add("show");setTimeout(()=>e.classList.remove("show"),2200)};
+const stars=r=>r?`<span class="stars">★ ${r.toFixed(1)}</span>`:`<span class="meta">нет оценок</span>`;
+
+function head(){asstMount();$("#who").innerHTML=user?`<span class="chip">${esc(user.name)} · ${isStore()?"магазин":"поставщик"}</span>`:"";$("#out").hidden=!user}
+$("#out").onclick=()=>{user=null;ls.set("sm_user",null);render()};
+
+function render(){head();user?renderMain():renderReg()}
+
+function renderReg(){
+$("#app").innerHTML=`<section class="reg"><div>
+<h1>Нужный поставщик за минуту</h1><p class="lead">ИИ подбирает поставщика под задачу вашего бизнеса. Или выбирайте сами в каталоге по рейтингу и отзывам.</p>
+<svg class="net" viewBox="0 0 300 150" aria-hidden="true"><g stroke="var(--line)" stroke-width="2"><path d="M40 20L240 40M40 20L240 75M40 55L240 40M40 90L240 110M40 125L240 75M40 125L240 110"/></g><path d="M40 90L240 40" stroke="var(--teal)" stroke-width="4"/><g fill="var(--navy)" stroke="var(--blue)" stroke-width="3"><circle cx="40" cy="20" r="11"/><circle cx="40" cy="55" r="11"/><circle cx="40" cy="90" r="11" fill="var(--teal)"/><circle cx="40" cy="125" r="11"/><circle cx="240" cy="40" r="11" fill="var(--teal)"/><circle cx="240" cy="75" r="11"/><circle cx="240" cy="110" r="11"/></g></svg></div>
+<div class="panel"><h2 style="font-size:24px">Регистрация</h2><label>Кто вы?</label>
+<div class="roles"><button class="role" data-r="supplier" aria-pressed="${role==="supplier"}"><b>Я поставщик</b><span>Ищу новых клиентов</span></button><button class="role" data-r="store" aria-pressed="${role==="store"}"><b>Я магазин</b><span>Ищу поставщика</span></button></div>
+<form id="rf" onsubmit="return false">
+<label for="n">${role==="store"?"Название магазина / кафе":"Название компании"}</label><input id="n" required maxlength="60">
+<div class="row2"><div><label for="c">Город</label><select id="c">${["Тараз","Алматы","Шымкент","Астана","Другой"].map(c=>`<option>${c}</option>`).join("")}</select></div>
+<div><label for="e">Телефон или email</label><input id="e" required maxlength="60"></div></div>
+<label for="k">${role==="store"?"Что вам нужно":"Категория товаров"}</label><select id="k">${Object.entries(CATS).map(([k,v])=>`<option value="${k}">${v}</option>`).join("")}</select>
+<label for="t">${role==="store"?"Опишите потребность":"Что поставляете (через пробел)"}</label><input id="t" required maxlength="120" placeholder="${role==="store"?"Например: 100 кг говядины в неделю":"говядина баранина фарш"}">
+<div class="row2"><div><label for="m">${role==="store"?"Бюджет, ₸":"Мин. заказ, ₸"}</label><input id="m" type="number" min="0" value="100000"></div><div><label for="d">${role==="store"?"Нужно за (дней)":"Доставка (дней)"}</label><input id="d" type="number" min="1" max="30" value="2"></div></div>
+<button class="btn" style="width:100%;margin-top:18px" id="go">Зарегистрироваться</button></form></div></section>`;
+document.querySelectorAll(".role").forEach(b=>b.onclick=()=>{role=b.dataset.r;renderReg()});
+$("#go").onclick=()=>{const g=i=>$("#"+i).value.trim();if(!g("n")||!g("e")||!g("t")){toast("Заполните название, контакт и описание");return}
+const o={id:"u"+Date.now(),kind:role==="store"?"sto":"sup",name:g("n"),city:g("c"),cat:g("k"),tags:g("t").toLowerCase(),desc:g("t"),contact:g("e"),since:new Date().getFullYear(),deals:0,rev:[],days:+g("d")||2};
+role==="store"?(o.need=g("t"),o.budget=+g("m")||0):(o.min=+g("m")||0);
+user={name:o.name,role,id:o.id};extra.push(o);ls.set("sm_user",user);ls.set("sm_extra",extra);tab="catalog";render()}}
+
+function renderMain(){
+$("#app").innerHTML=`<div class="tabs" role="tablist"><button class="tab" role="tab" data-t="catalog" aria-selected="${tab==="catalog"}">Каталог по рейтингу</button><button class="tab" role="tab" data-t="ai" aria-selected="${tab==="ai"}">ИИ-подбор</button><button class="tab" role="tab" data-t="chat" aria-selected="${tab==="chat"}">Сообщения</button></div><div id="pane"></div>`;
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{tab=b.dataset.t;renderMain()});
+tab==="catalog"?renderCatalog():tab==="chat"?renderChat():renderAI()}
+
+function card(o,m){const st=o.kind?o.kind==="sto":!!o.need;
+const price=st?`Бюджет ${fmt(o.budget)}`:`от ${fmt(o.min)}`;
+return `<button class="item" data-id="${esc(o.id)}"><div class="av">${esc(o.name.replace(/[«»"]/g,"")[0]||"?")}</div>
+<div><h3>${esc(o.name)}</h3><div class="meta">${esc(o.city)} · ${esc(CATS[o.cat])} · ${o.deals} сделок · с ${o.since}</div>
+<div class="meta">${esc(st?o.need:o.desc)}</div>${m?m.why.map(w=>`<span class="tag">${esc(w)}</span>`).join(""):""}</div>
+<div class="right">${m?`<div class="score">${m.pct}%</div><div class="bar"><i style="width:${m.pct}%"></i></div>`:""}${stars(avg(o))}<div>${price}</div><div class="meta">${o.days} дн.</div></div></button>`}
+
+function renderCatalog(){
+const cities=[...new Set(list().map(o=>o.city))];
+$("#pane").innerHTML=`<div class="cat"><aside class="filters panel"><label for="fq" style="margin-top:0">Поиск</label><input id="fq" value="${esc(f.q)}" placeholder="${isStore()?"говядина, лаваш…":"название или потребность"}">
+<label for="fc">Категория</label><select id="fc"><option value="">Все</option>${Object.entries(CATS).map(([k,v])=>`<option value="${k}" ${f.cat===k?"selected":""}>${v}</option>`).join("")}</select>
+<label for="fy">Город</label><select id="fy"><option value="">Все</option>${cities.map(c=>`<option ${f.city===c?"selected":""}>${esc(c)}</option>`).join("")}</select>
+<label for="fs">Сортировка</label><select id="fs"><option value="rating">По рейтингу</option><option value="deals" ${f.sort==="deals"?"selected":""}>По числу сделок</option><option value="price" ${f.sort==="price"?"selected":""}>${isStore()?"Мин. заказ ↑":"Бюджет ↓"}</option><option value="days" ${f.sort==="days"?"selected":""}>Быстрее доставка</option></select></aside>
+<div><h2 style="font-size:22px;margin-bottom:12px">${isStore()?"Поставщики":"Магазины и заведения"}</h2><div id="lst"></div></div></div>`;
+const upd=()=>{f.q=$("#fq").value;f.cat=$("#fc").value;f.city=$("#fy").value;f.sort=$("#fs").value;drawList()};
+["fq","fc","fy","fs"].forEach(i=>$("#"+i).oninput=upd);drawList()}
+
+function drawList(){
+const q=f.q.toLowerCase().trim();
+let a=list().filter(o=>(!f.cat||o.cat===f.cat)&&(!f.city||o.city===f.city)&&(!q||(o.name+o.tags+(o.need||"")+o.desc).toLowerCase().includes(q)));
+const k={rating:(x,y)=>avg(y)-avg(x),deals:(x,y)=>y.deals-x.deals,price:(x,y)=>isStore()?x.min-y.min:y.budget-x.budget,days:(x,y)=>x.days-y.days}[f.sort];
+a.sort(k);$("#lst").innerHTML=a.length?a.map(o=>card(o)).join(""):`<div class="empty">Ничего не найдено. Сбросьте фильтры или попробуйте ИИ-подбор.</div>`;bind()}
+
+function bind(){document.querySelectorAll(".item").forEach(b=>b.onclick=()=>openProfile(b.dataset.id))}
+
+function openProfile(id){const o=list().find(x=>x.id===id);if(!o)return;const st=!!o.need;
+$("#dlg").innerHTML=`<h2>${esc(o.name)}</h2><div class="meta">${esc(o.city)} · ${esc(CATS[o.cat])}</div><p>${esc(st?o.need:o.desc)}</p>
+<div class="stat"><div>Средняя оценка<b>${avg(o)?"★ "+avg(o).toFixed(1):"—"}</b></div><div>Сделок<b>${o.deals}</b></div><div>На платформе<b>с ${o.since}</b></div><div>${st?"Бюджет":"Мин. заказ"}<b>${fmt(st?o.budget:o.min)}</b></div><div>${st?"Нужно за":"Доставка"}<b>${o.days} дн.</b></div></div>
+<h3 style="font-size:17px">Отзывы партнёров</h3>${o.rev.length?o.rev.map(r=>`<div class="rev"><b>${esc(r.a)}</b> <span class="stars">${"★".repeat(r.r)}</span><br>${esc(r.t)}</div>`).join(""):`<div class="rev meta">Отзывов пока нет.</div>`}
+<div style="display:flex;gap:10px;margin-top:16px"><button class="btn" id="wr">Написать</button><button class="btn ghost" id="req">${st?"Предложить поставку":"Отправить заявку"}</button><button class="btn ghost" id="cl">Закрыть</button></div>`;
+$("#dlg").showModal();$("#cl").onclick=()=>$("#dlg").close();$("#wr").onclick=()=>{$("#dlg").close();openChat(o.id)};$("#req").onclick=()=>{$("#dlg").close();toast("Заявка отправлена: "+o.name)}}
+
+/* ---- ИИ-матчер: разбор запроса + взвешенный скоринг ---- */
+function parse(q){q=q.toLowerCase();const cats=Object.keys(KW).filter(c=>KW[c].some(w=>q.includes(w)));
+let budget=null,m=q.match(/(?:до|бюджет|за)\s*([\d\s]{4,})\s*(?:₸|тг|тенге)?/);if(m)budget=+m[1].replace(/\s/g,"");
+let days=null;m=q.match(/(?:за|в течение|до)\s*(\d+)\s*(?:дн|сут)/);if(m)days=+m[1];if(/завтра|срочно/.test(q))days=1;
+const city=["тараз","алматы","шымкент","астан"].find(c=>q.includes(c))||null;
+const words=q.split(/[^а-яёa-z]+/).filter(w=>w.length>3).map(w=>w.slice(0,5));return{cats,budget,days,city,words}}
+
+function match(q){const p=parse(q);
+return list().map(o=>{let s=0,why=[];const hay=(o.name+" "+o.tags+" "+(o.need||"")+" "+o.desc).toLowerCase();
+if(p.cats.includes(o.cat)){s+=40;why.push("совпадает категория")}
+const hit=p.words.filter(w=>hay.includes(w)).length;if(hit){s+=Math.min(20,hit*7);why.push("совпадение по товарам")}
+const lim=isStore()?o.min:o.budget;
+if(p.budget!=null){if(isStore()?o.min<=p.budget:o.budget>=0){s+=10;why.push(isStore()?"укладывается в бюджет":"бюджет известен")}}else s+=5;
+if(p.days!=null){if(o.days<=p.days){s+=10;why.push("успевает в срок")}}else s+=5;
+if(p.city&&o.city.toLowerCase().startsWith(p.city.slice(0,4))){s+=5;why.push("ваш город")}
+const r=avg(o);if(r){s+=r/5*20;if(r>=4.5)why.push("высокий рейтинг")}
+s+=Math.min(o.deals/300,1)*10;if(o.deals>=200)why.push("много сделок");
+return{o,pct:Math.min(99,Math.round(s)),why:why.slice(0,4),rel:p.cats.includes(o.cat)||hit>0}}).filter(x=>x.rel||!(parse(q).cats.length||parse(q).words.length)).sort((a,b)=>b.pct-a.pct).slice(0,3)}
+
+function renderAI(){
+const ex=isStore()?["Нужен поставщик мяса для донерной, бюджет до 400000 ₸, в Таразе","Овощи и зелень каждый день, срочно","Лаваш для донерной за 1 день"]:["Продаю лаваш и хлеб для общепита","Фермерское мясо баранина, Шымкент","Упаковка для еды на вынос"];
+$("#pane").innerHTML=`<div style="max-width:760px;padding-bottom:48px"><h2 style="font-size:24px">${isStore()?"Опишите, что вам нужно":"Опишите, что вы поставляете"}</h2>
+<p class="meta">ИИ найдёт лучшие совпадения с учётом категории, цены, срока, рейтинга и истории сделок.</p>
+<textarea id="aq" rows="3" placeholder="${esc(ex[0])}">${esc(ai.q)}</textarea>
+<div class="ex">${ex.map(e=>`<button>${esc(e)}</button>`).join("")}</div>
+<button class="btn" id="run">Подобрать за минуту</button><div id="res" style="margin-top:20px" aria-live="polite"></div></div>`;
+document.querySelectorAll(".ex button").forEach(b=>b.onclick=()=>{$("#aq").value=b.textContent;run()});
+$("#run").onclick=run;draw()}
+function run(){ai.q=$("#aq").value.trim();if(!ai.q){toast("Опишите задачу одной фразой");return}
+$("#res").innerHTML=`<div class="meta">Анализирую запрос и сравниваю профили…</div>`;
+setTimeout(()=>{ai.res=match(ai.q);draw()},700)}
+function draw(){const r=$("#res");if(!r||!ai.res)return;
+r.innerHTML=ai.res.length?`<h3 style="font-size:18px;margin-bottom:10px">Лучшие варианты</h3>`+ai.res.map(m=>card(m.o,m)).join(""):`<div class="empty">Подходящих вариантов не нашлось. Уточните товар или категорию.</div>`;bind()}
+
+/* ---- ИИ через runtime sample (с запасным локальным ответом) ---- */
+let smp;async function getSample(){if(smp!==undefined)return smp;try{smp=window.claude&&claude.use?await claude.use("sample"):null}catch(e){smp=null}return smp}
+const all=()=>SUP.concat(STO,extra),peerOf=id=>all().find(x=>x.id===id);
+/* ---- чат магазин ↔ поставщик ---- */
+let chatPeer=null,chats=ls.get("sm_chats")||{},cBusy=false;
+const saveChats=()=>ls.set("sm_chats",chats);
+const canned=["Здравствуйте! Да, готовы обсудить. Какой объём вам нужен?","Спасибо за обращение. Пришлите детали заказа и желаемый срок.","Условия зависят от объёма. Какой у вас бюджет?"];
+function openChat(id){chatPeer=id;tab="chat";renderMain()}
+async function peerReply(p,th){const s=await getSample();if(s){try{
+const intro=`Ты ведёшь деловую переписку на платформе SupplyMatch от имени «${p.name}» (${p.need?"магазин":"поставщик"}, город ${p.city}, категория ${CATS[p.cat]}; ${p.need?"потребность: "+p.need:"описание: "+p.desc+", мин. заказ "+p.min+" ₸, доставка "+p.days+" дн."}). Собеседник — ${isStore()?"магазин":"поставщик"} «${user.name}». Отвечай по-русски, 1–3 коротких предложения, по-деловому, точных цен не выдумывай.\n\nПереписка:\n`;
+const r=await s(th.map((m,i)=>({role:m.from==="me"?"user":"assistant",content:(i===0?intro:"")+m.t})),{cache:false});if(r.text)return r.text}catch(e){}}
+return canned[Math.floor(Math.random()*canned.length)]}
+function renderChat(){const ids=Object.keys(chats).filter(id=>peerOf(id));if(chatPeer&&!ids.includes(chatPeer)&&peerOf(chatPeer))ids.unshift(chatPeer);const p=chatPeer&&peerOf(chatPeer);
+$("#pane").innerHTML=`<div class="chat panel"><div class="clist">${ids.length?ids.map(id=>{const q=peerOf(id),th=chats[id]||[];return `<button class="crow" data-id="${esc(id)}" aria-current="${id===chatPeer}"><b>${esc(q.name)}</b><span class="meta">${esc((th[th.length-1]||{}).t||"Новый диалог")}</span></button>`}).join(""):`<div class="meta" style="padding:14px">Диалогов пока нет. Откройте профиль в каталоге и нажмите «Написать».</div>`}</div><div class="cbox">${p?`<div class="chead"><b>${esc(p.name)}</b> <span class="meta">${esc(p.city)} · ${esc(CATS[p.cat])}</span></div><div class="msgs" id="msgs"></div><div class="meta" style="padding:0 14px">Демо: ответы собеседников имитирует ИИ.</div><div class="cin"><input id="ci" placeholder="Сообщение…" maxlength="400"><button class="btn" id="cs">Отправить</button></div>`:`<div class="empty" style="margin:20px">Выберите диалог слева</div>`}</div></div>`;
+document.querySelectorAll(".crow").forEach(b=>b.onclick=()=>{chatPeer=b.dataset.id;renderChat()});
+if(p){drawMsgs(cBusy);$("#cs").onclick=sendChat;$("#ci").onkeydown=e=>{if(e.key==="Enter")sendChat()}}}
+function drawMsgs(typing){const el=$("#msgs");if(!el)return;const th=chats[chatPeer]||[];el.innerHTML=(th.length?th.map(m=>`<div class="bub ${m.from}">${esc(m.t)}</div>`).join(""):`<div class="meta">Напишите первое сообщение.</div>`)+(typing?`<div class="bub them">печатает…</div>`:"");el.scrollTop=el.scrollHeight}
+async function sendChat(){const i=$("#ci"),t=i.value.trim();if(!t||cBusy)return;const id=chatPeer,p=peerOf(id),th=chats[id]=chats[id]||[];th.push({from:"me",t});saveChats();i.value="";cBusy=true;drawMsgs(true);
+let r;try{r=await peerReply(p,th)}catch(e){r=canned[0]}
+th.push({from:"them",t:r});saveChats();cBusy=false;if(tab==="chat"){renderChat();const c=$("#ci");c&&c.focus()}}
+/* ---- ИИ-помощник в углу ---- */
+let aHist=[],aBusy=false,aTmp="";
+function asstMount(){let w=$("#asst");if(!user){if(w)w.remove();aHist=[];return}if(w)return;w=document.createElement("div");w.id="asst";
+w.innerHTML=`<div id="ap" hidden role="dialog" aria-label="ИИ-помощник"><div class="ah"><b>ИИ-помощник</b><button class="btn ghost sm" id="ax" aria-label="Закрыть">✕</button></div><div id="am" aria-live="polite"></div><div class="ex" id="aex"></div><div class="cin"><input id="ai2" placeholder="Спросите что-нибудь…" maxlength="300"><button class="btn" id="as">Спросить</button></div></div><button class="btn" id="ab">ИИ-помощник</button>`;
+document.body.appendChild(w);const ap=$("#ap");
+$("#ab").onclick=()=>{ap.hidden=!ap.hidden;if(!ap.hidden){drawA();$("#ai2").focus()}};$("#ax").onclick=()=>ap.hidden=true;
+const qs=isStore()?["Какие поставщики рядом со мной?","Кого выбрать по рейтингу?","Как составить запрос?"]:["Какие магазины рядом со мной?","Кому нужен мой товар?","Как повысить рейтинг?"];
+$("#aex").innerHTML=qs.map(q=>`<button>${esc(q)}</button>`).join("");document.querySelectorAll("#aex button").forEach(b=>b.onclick=()=>ask(b.textContent));
+const go=()=>{const i=$("#ai2"),t=i.value.trim();if(t&&!aBusy){i.value="";ask(t)}};$("#as").onclick=go;$("#ai2").onkeydown=e=>{if(e.key==="Enter")go()}}
+function drawA(){const m=$("#am");if(!m)return;m.innerHTML=(aHist.length?"":`<div class="meta">Спросите про поставщиков, магазины рядом или как выбрать партнёра.</div>`)+aHist.map(x=>`<div class="bub ${x.role==="user"?"me":"them"}">${esc(x.content)}</div>`).join("")+(aBusy?`<div class="bub them">${esc(aTmp)||"думаю…"}</div>`:"");m.scrollTop=m.scrollHeight}
+function ctx(){const me=all().find(x=>x.id===user.id);return{city:me?me.city:"не указан",rows:list().map(o=>[o.id,o.name,o.city,CATS[o.cat],avg(o).toFixed(1),o.deals+" сделок",o.need?"бюджет "+o.budget:"мин.заказ "+o.min,o.days+" дн."].join("|")).join("\n")}}
+function localAnswer(q,c){const t=q.toLowerCase(),near=/рядом|близост|город/.test(t);let a=list();const k=Object.keys(KW).find(x=>KW[x].some(w=>t.includes(w)));if(k)a=a.filter(o=>o.cat===k);
+const n=a.filter(o=>o.city===c.city),sh=(near&&n.length?n:a).sort((x,y)=>avg(y)-avg(x)).slice(0,3);if(!sh.length)return"Пока ничего не нашёл. Уточните товар или город.";
+return(near?(n.length?`В вашем городе (${c.city}) нашёл:`:"В вашем городе пока никого нет. Лучшие варианты из других городов:"):"Лучшие варианты по рейтингу:")+"\n"+sh.map(o=>`• ${o.name}, ${o.city} — ★ ${avg(o).toFixed(1)}, ${o.deals} сделок`).join("\n")+"\nОткройте профиль в каталоге и нажмите «Написать»."}
+async function ask(q){aHist.push({role:"user",content:q});aBusy=true;aTmp="";drawA();const c=ctx();let out;const s=await getSample();
+if(s){try{const intro=`Ты — ИИ-помощник платформы SupplyMatch, которая связывает магазины, кафе и поставщиков в Казахстане. Пользователь: ${isStore()?"магазин":"поставщик"} «${user.name}», город: ${c.city}. Отвечай по-русски, кратко и по делу. «Рядом» = тот же город, затем другие города. Рекомендуй только из списка ниже (id|название|город|категория|рейтинг|сделки|условия|срок), других не выдумывай. Можешь советовать, как составить запрос и выбрать партнёра.\nСписок:\n${c.rows}\n\nДиалог:\n`;
+const r=await s(aHist.map((m,i)=>i===0?{role:m.role,content:intro+m.content}:m),{cache:false,onText:({text})=>{aTmp=text;drawA()}});out=r.text}catch(e){}}
+if(!out)out=localAnswer(q,c);aHist.push({role:"assistant",content:out});aBusy=false;aTmp="";drawA()}
+render();
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('service-worker.js')
+      .then(() => console.log('Service Worker зарегистрирован'))
+      .catch((err) => console.log('Ошибка:', err));
+  });
+}
+</script>
+</body>
+</html>
